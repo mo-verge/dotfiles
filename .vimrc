@@ -49,6 +49,10 @@ Plugin 'christoomey/vim-titlecase'
 
 Plugin 'jeffkreeftmeijer/vim-numbertoggle'
 
+Plugin 'vim-scripts/L9'
+
+Plugin 'vim-scripts/FuzzyFinder'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
