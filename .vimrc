@@ -13,19 +13,15 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 
 " Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
-Plugin 'tmhedberg/SimpylFold'
-
-Plugin 'Konfekt/FastFold'
-
 Plugin 'kopischke/vim-stay'
 
 Plugin 'vim-scripts/indentpython.vim'
 
-Bundle  'Valloric/YouCompleteMe'
-
 Plugin 'morhetz/gruvbox'
 
 Plugin 'scrooloose/syntastic'
+
+Plugin 'Valloric/YouCompleteMe'
 
 Plugin 'nvie/vim-flake8'
 
@@ -43,19 +39,30 @@ Plugin 'tpope/vim-surround'
 
 Plugin 'tpope/vim-commentary'
 
-Plugin 'christoomey/vim-system-copy'
-
 Plugin 'christoomey/vim-titlecase'
 
 Plugin 'jeffkreeftmeijer/vim-numbertoggle'
 
-Plugin 'vim-scripts/L9'
+Plugin 'Raimondi/delimitMate'
 
-Plugin 'vim-scripts/FuzzyFinder'
+Plugin 'nginx.vim'
 
+Plugin 'mileszs/ack.vim'
+
+" Plugin 'gregsexton/MatchTag'
+
+Plugin 'leafgarland/typescript-vim'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
+
+" Ack ag search
+if executable('ag')
+  let g:ackprg = 'ag'
+endif
+
+"Enable Mouse
+set mouse=a
 
 " Enable folding
 set foldmethod=indent
@@ -64,16 +71,29 @@ set foldlevel=99
 " Enable folding with the spacebar
 nnoremap <space> za
 
-au BufNewFile,BufRead *.*
-    \ set tabstop=4 |
-    \ set softtabstop=4 |
-    \ set shiftwidth=4 |
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set textwidth=79
+set expandtab
+set autoindent
+set fileformat=unix
+
+au BufNewFile,BufRead *.html
+    \ set tabstop=2 |
+    \ set softtabstop=2 |
+    \ set shiftwidth=2 |
     \ set textwidth=79 |
     \ set expandtab |
     \ set autoindent |
     \ set fileformat=unix
 
+autocmd FileType yaml execute  ':silent! %s#^\t\+#\=repeat(" ", len(submatch(0))*' . &ts . ')'
+
 let g:ycm_python_binary_path = 'python3'
+
+let g:syntastic_python_python_exec = 'python3'
+
 
 " set colorscheme
 set background=dark
@@ -107,16 +127,26 @@ let g:Powerline_symbols = 'fancy'
 setlocal spell spelllang=en_us
 set complete+=kspell
 
+set number relativenumber
 
+autocmd BufRead,BufNewFile /etc/nginx/sites-*/* setfiletype conf
 
 " #####################
 " #  Setting key maps #
 " #####################
 "
+" Set highlight 
+
+nnoremap <F6> :set hlsearch!<CR>
+
 " Paste mode toggle
 
 set pastetoggle=<F5>
 
 " NerdTree toggle
 map <C-l> :NERDTreeToggle<CR>
+
+" disable increment and decrement maps
+map <C-a> <Nop>
+map <C-x> <Nop>
 

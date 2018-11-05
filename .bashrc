@@ -37,13 +37,13 @@ fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
+    xterm-color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
-#force_color_prompt=yes
+force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -59,7 +59,7 @@ fi
 if [ "$color_prompt" = yes ]; then
     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n\$ '
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\u:\W\$ '
 fi
 unset color_prompt force_color_prompt
 
@@ -83,9 +83,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
-
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # some more ls aliases
 alias ll='ls -alF'
@@ -116,7 +113,45 @@ if ! shopt -oq posix; then
   fi
 fi
 
-if [ "$TERM" == "xterm" ]; then
-  # No it isn't, it's gnome-terminal
-  export TERM=xterm-256color
+# Setup VIM as default editor
+export EDITOR=vim
+export SVN_EDITOR="vim +1"
+
+export XILINXD_LICENSE_FILE=2890@192.168.1.100
+
+# Run Xilinx environment setting script if it exists
+if [ -d "/opt/Xilinx/SDK/2015.4/bin" ] ; then
+   source /opt/Xilinx/SDK/2015.4/settings64.sh
 fi
+
+# Add linux Zynq cross-compiler to PATH if it exists
+if [ -d "/opt/Xilinx/petalinux-v2015.4-final/tools/common/petalinux/bin" ] ; then
+   # Sourcing PetaLinux environment
+   source /opt/Xilinx/petalinux-v2015.4-final/settings.sh
+   # Turn off webtalk
+   petalinux-util --webtalk off
+fi
+
+
+
+if [ "$TERM" != "dumb" ]; then
+      [ -e "$HOME/.dir_colors/dircolors" ] && 
+      DIR_COLORS="$HOME/.dir_colors/dircolors" [ -e "$DIR_COLORS" ] ||
+      DIR_COLORS="" 
+      eval "`dircolors -b $DIR_COLORS`" 
+      alias ls='ls --color=auto'
+fi
+
+alias ls="ls -F --color"
+
+# added by Anaconda3 4.3.0 installer
+export PATH="/home/evertz/anaconda3/bin:$PATH"
+
+
+
+#Git Prompt
+GIT_PROMPT_ONLY_IN_REPO=1
+source ~/.bash-git-prompt/gitprompt.sh
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
