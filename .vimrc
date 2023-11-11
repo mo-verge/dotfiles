@@ -3,49 +3,79 @@ filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
 
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+call plug#begin()
 
-" let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
+Plug 'kopischke/vim-stay'
 
-" Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
-Plugin 'kopischke/vim-stay'
+Plug 'vim-scripts/indentpython.vim'
 
-Plugin 'vim-scripts/indentpython.vim'
+Plug 'morhetz/gruvbox'
 
-Plugin 'morhetz/gruvbox'
+Plug 'scrooloose/nerdcommenter'
 
-Plugin 'scrooloose/nerdcommenter'
+Plug 'nvie/vim-flake8'
 
-Plugin 'Valloric/YouCompleteMe'
+Plug 'scrooloose/nerdtree'
 
-Plugin 'nvie/vim-flake8'
+Plug 'ctrlpvim/ctrlp.vim'
 
-Plugin 'scrooloose/nerdtree'
+Plug 'tpope/vim-fugitive'
 
-Plugin 'ctrlpvim/ctrlp.vim'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
 
-Plugin 'tpope/vim-fugitive'
+Plug 'mileszs/ack.vim'
 
-Plugin 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'vim-airline/vim-airline'
 
-Plugin 'nginx.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+" {{{
+  let g:fzf_nvim_statusline = 0 " disable statusline overwriting
 
-Plugin 'mileszs/ack.vim'
+  nnoremap <silent> <leader><space> :Files<CR>
+  nnoremap <silent> <leader>a :Buffers<CR>
+  nnoremap <silent> <leader>A :Windows<CR>
+  nnoremap <silent> <leader>; :BLines<CR>
+  nnoremap <silent> <leader>o :BTags<CR>
+  nnoremap <silent> <leader>O :Tags<CR>
+  nnoremap <silent> <leader>? :History<CR>
+  nnoremap <silent> <leader>/ :execute 'Ag ' . input('Ag/')<CR>
+  nnoremap <silent> <leader>. :AgIn 
 
-Plugin 'vim-airline/vim-airline'
+  nnoremap <silent> K :call SearchWordWithAg()<CR>
+  vnoremap <silent> K :call SearchVisualSelectionWithAg()<CR>
+  nnoremap <silent> <leader>gl :Commits<CR>
+  nnoremap <silent> <leader>ga :BCommits<CR>
+  nnoremap <silent> <leader>ft :Filetypes<CR>
 
-" Plugin 'gregsexton/MatchTag'
-"Plugin 'christoomey/vim-titlecase'
-"Plugin 'scrooloose/syntastic'
-"Plugin 'leafgarland/typescript-vim'
+  imap <C-x><C-f> <plug>(fzf-complete-file-ag)
+  imap <C-x><C-l> <plug>(fzf-complete-line)
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+  function! SearchWordWithAg()
+    execute 'Ag' expand('<cword>')
+  endfunction
+
+  function! SearchVisualSelectionWithAg() range
+    let old_reg = getreg('"')
+    let old_regtype = getregtype('"')
+    let old_clipboard = &clipboard
+    set clipboard&
+    normal! ""gvy
+    let selection = getreg('"')
+    call setreg('"', old_reg, old_regtype)
+    let &clipboard = old_clipboard
+    execute 'Ag' selection
+  endfunction
+
+  function! SearchWithAgInDirectory(...)
+    call fzf#vim#ag(join(a:000[1:], ' '), extend({'dir': a:1}, g:fzf#vim#default_layout))
+  endfunction
+  command! -nargs=+ -complete=dir AgIn call SearchWithAgInDirectory(<f-args>)
+" }}}
+
+
+call plug#end()
 
 "Enable Mouse
 set mouse=a
@@ -117,8 +147,6 @@ setlocal spell spelllang=en_us
 set complete+=kspell
 
 set number relativenumber
-
-autocmd BufRead,BufNewFile /etc/nginx/sites-*/* setfiletype conf
 
 let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py' 
 let g:ycm_show_diagnostics_ui = 0
